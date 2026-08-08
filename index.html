@@ -4,26 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>An Phúc Link Hub</title>
+    <!-- Tailwind & Fonts & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
+        /* Ẩn thanh cuộn */
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        .transition-200 { transition: all 0.2s ease-in-out; }
+        
+        /* Layout Card */
+        .website-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .website-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.1);
+            border-color: #bfdbfe; /* blue-200 */
+        }
+        
+        /* Text Titles */
+        .website-title {
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.15s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        .website-title:hover {
+            color: #2563eb;
+        }
+
+        /* Logo Clickable */
+        .logo-link {
+            display: block;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+        .logo-link:hover {
+            transform: scale(1.05);
+        }
+
+        /* Fallback Letter Logo */
+        .website-letter-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 21px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.10), inset 0 1px 0 rgba(255,255,255,0.25);
+            flex-shrink: 0;
+        }
+
+        .website-logo-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            object-fit: cover;
+            background-color: white;
+            border: 1px solid #f1f5f9;
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden text-slate-800">
 
-    <!-- OVERLAY CHO MOBILE -->
+    <!-- OVERLAY (MOBILE) -->
     <div id="mobileOverlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden backdrop-blur-sm transition-opacity"></div>
 
     <!-- SIDEBAR -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 transform -translate-x-full md:relative md:translate-x-0 shrink-0">
+        <!-- Brand Logo -->
         <div class="h-[90px] flex items-center justify-between px-6 border-b border-slate-100 shrink-0">
             <div class="flex items-center gap-3">
-                <img src="./logo.jpg" alt="An Phúc Logo" class="w-10 h-10 rounded-[10px] object-cover shadow-sm border border-slate-100" onerror="this.src='https://ui-avatars.com/api/?name=AP&background=2563eb&color=fff&rounded=true'">
+                <a href="#" class="logo-link">
+                    <img src="./logo.jpg" alt="An Phúc Logo" class="w-10 h-10 rounded-xl object-cover shadow-sm border border-slate-100" onerror="this.src='https://ui-avatars.com/api/?name=AP&background=2563eb&color=fff&rounded=true'">
+                </a>
                 <div>
                     <h1 class="font-bold text-[17px] text-slate-900 tracking-tight leading-tight">Link Hub</h1>
                     <p class="text-[9px] text-slate-500 font-bold tracking-[0.15em] uppercase mt-0.5">An Phúc Center</p>
@@ -33,6 +94,7 @@
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
+        <!-- Menu Danh Mục -->
         <div class="flex-1 overflow-y-auto hide-scroll p-4 flex flex-col gap-1" id="sidebarMenu"></div>
     </aside>
 
@@ -40,90 +102,119 @@
     <main class="flex-1 flex flex-col h-full min-w-0 bg-slate-50 relative">
         <!-- HEADER -->
         <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shrink-0">
-            <div class="h-[90px] px-5 md:px-8 flex flex-col md:flex-row justify-center md:justify-between items-start md:items-center gap-4">
+            <div class="px-5 md:px-8 py-4 flex flex-col md:flex-row justify-center md:justify-between items-start md:items-center gap-4 min-h-[90px]">
                 
-                <div class="flex items-center gap-4 w-full md:w-auto mt-2 md:mt-0">
+                <div class="flex items-center gap-4 w-full md:w-auto">
                     <button onclick="toggleMobileMenu()" class="md:hidden p-2 -ml-2 text-slate-600 rounded-xl hover:bg-slate-100 shrink-0">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
                     <div>
-                        <h2 class="font-bold text-lg text-slate-800 leading-tight">Hệ thống Website</h2>
-                        <p id="headerStats" class="text-[13px] text-slate-500 font-medium">Đang tải dữ liệu...</p>
+                        <h2 class="font-bold text-lg text-slate-800 leading-tight">Quản lý Website</h2>
+                        <p id="headerStats" class="text-[13px] text-slate-500 font-medium">Đang đồng bộ dữ liệu...</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 w-full md:w-auto mb-2 md:mb-0">
-                    <div class="relative w-full md:w-[320px] lg:w-[400px] group">
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                    <!-- Sắp xếp -->
+                    <select id="sortSelect" onchange="handleSearchAndSort()" class="w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-600 outline-none focus:border-blue-500 cursor-pointer">
+                        <option value="newest">Mới thêm</option>
+                        <option value="az">Tên A–Z</option>
+                        <option value="za">Tên Z–A</option>
+                        <option value="category">Danh mục</option>
+                    </select>
+
+                    <!-- Tìm kiếm -->
+                    <div class="relative w-full sm:w-[320px] lg:w-[380px] group">
                         <i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
-                        <input type="text" id="searchInput" placeholder="Tìm tên web, URL, danh mục... (Ctrl+K)" class="w-full bg-slate-100 border-none rounded-xl py-2.5 pl-11 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400" onkeyup="handleSearch()">
-                        <button onclick="clearSearch()" id="clearSearchBtn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden">
+                        <input type="text" id="searchInput" placeholder="Tìm tên web, URL, danh mục... (Ctrl+K)" class="w-full bg-slate-100 border-none rounded-xl py-2.5 pl-11 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400" onkeyup="handleSearchAndSort()">
+                        <button onclick="clearSearch()" id="clearSearchBtn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden p-1">
                             <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
                     </div>
-                    <button onclick="openFormModal('add')" class="shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-semibold h-[42px] px-5 rounded-xl shadow-sm shadow-blue-200 transition-200 flex items-center gap-2">
+                    
+                    <!-- Nút Thêm -->
+                    <button onclick="openFormModal('add')" class="w-full sm:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-semibold h-[42px] px-5 rounded-xl shadow-sm shadow-blue-200 transition flex items-center justify-center gap-2">
                         <i data-lucide="plus" class="w-4 h-4"></i>
-                        <span class="hidden sm:inline">Thêm mới</span>
+                        <span>Thêm mới</span>
                     </button>
                 </div>
             </div>
 
-            <!-- CHIP CHO MOBILE -->
+            <!-- CHIP TAGS (MOBILE) -->
             <div class="md:hidden border-t border-slate-100 bg-white">
                 <div class="flex overflow-x-auto hide-scroll gap-2 px-5 py-3" id="mobileChips"></div>
             </div>
         </header>
 
-        <!-- LƯỚI DATA -->
+        <!-- LƯỚI WEBSITE -->
         <div class="flex-1 p-5 md:p-8 overflow-y-auto hide-scroll relative">
             <div class="max-w-[1600px] mx-auto">
                 <div id="loading" class="absolute inset-0 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm z-10 hidden">
                     <i data-lucide="loader-2" class="w-8 h-8 text-blue-600 animate-spin"></i>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5" id="dataGrid"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="dataGrid">
+                    <!-- Render Cards Here -->
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- MODAL FORM -->
-    <div id="formModal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
-        <div class="bg-white p-6 md:p-8 rounded-[20px] w-full max-w-[440px] shadow-2xl">
-            <div class="flex justify-between items-center mb-5">
-                <h2 id="modalTitle" class="text-lg font-bold text-slate-800">Thêm Liên Kết</h2>
-                <button onclick="closeFormModal()" class="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-1.5 rounded-lg"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
+    <!-- ================== MODALS ================== -->
+
+    <!-- Modal Form (Thêm/Sửa) -->
+    <div id="formModal" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4 transition-opacity">
+        <div class="bg-white p-6 md:p-8 rounded-[20px] w-full max-w-[480px] shadow-2xl relative">
+            <button onclick="closeFormModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-1.5 rounded-lg transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h2 id="modalTitle" class="text-xl font-bold text-slate-800 mb-6">Thêm Website</h2>
+            
             <input type="hidden" id="editId">
-            <div class="flex flex-col gap-3">
-                <div>
-                    <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Danh Mục / Tag</label>
-                    <input type="text" id="cat" list="tagList" placeholder="VD: Công việc" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
-                    <datalist id="tagList"></datalist>
-                </div>
-                <div>
-                    <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Tên Website</label>
-                    <input type="text" id="name" placeholder="VD: An Phúc Education" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
-                </div>
-                <div>
-                    <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Đường dẫn (URL)</label>
-                    <input type="url" id="link" placeholder="https://" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
-                </div>
-                <div>
-                    <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Logo URL (Tùy chọn)</label>
-                    <input type="url" id="logo" placeholder="Link ảnh từ GitHub, Imgur... (bỏ trống tự lấy Favicon)" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Tài khoản</label>
-                        <input type="text" id="acc" placeholder="Email/User" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
+                        <label class="text-[12px] font-semibold text-slate-600 mb-1.5 block">Danh Mục</label>
+                        <input type="text" id="cat" list="tagList" placeholder="VD: Công việc" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                        <datalist id="tagList"></datalist>
                     </div>
                     <div>
-                        <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Mật khẩu</label>
-                        <input type="password" id="pass" placeholder="Bỏ trống nếu không đổi" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
+                        <label class="text-[12px] font-semibold text-slate-600 mb-1.5 block">Tên Website</label>
+                        <input type="text" id="name" placeholder="VD: THCS Trần Hưng Đạo" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[12px] font-semibold text-slate-600 mb-1.5 block">Đường dẫn (URL)</label>
+                    <input type="url" id="link" placeholder="https://" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                </div>
+                
+                <!-- Hỗ trợ Logo tùy chỉnh -->
+                <div>
+                    <label class="text-[12px] font-semibold text-slate-600 mb-1.5 block flex justify-between">
+                        <span>Logo tùy chỉnh (Tùy chọn)</span>
+                    </label>
+                    <div class="flex gap-3 items-center">
+                        <div class="w-10 h-10 shrink-0 bg-slate-100 border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden">
+                            <img id="logo-preview" src="" alt="Preview" class="w-full h-full object-cover hidden">
+                            <i id="logo-placeholder" data-lucide="image" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <input type="url" id="logo" placeholder="URL ảnh (Github Raw, Imgur...) để thay Favicon" class="flex-1 bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-100 mt-2">
+                    <div>
+                        <label class="text-[12px] font-semibold text-slate-600 mb-1.5 block">Tài khoản</label>
+                        <input type="text" id="acc" placeholder="Email/User" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white transition-colors">
+                    </div>
+                    <div>
+                        <label class="text-[12px] font-semibold text-slate-600 mb-1.5 block">Mật khẩu</label>
+                        <input type="password" id="pass" placeholder="Bỏ trống nếu không đổi" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white transition-colors">
                     </div>
                 </div>
             </div>
-            <div class="flex gap-3 justify-end mt-6">
-                <button onclick="closeFormModal()" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 font-medium text-sm">Hủy</button>
-                <button onclick="saveData()" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center gap-2">
+            <div class="flex gap-3 justify-end mt-8">
+                <button onclick="closeFormModal()" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 font-medium text-sm transition-colors">Hủy</button>
+                <button onclick="saveData()" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium text-sm flex items-center gap-2 shadow-md shadow-blue-200 transition-colors">
                     <i data-lucide="save" class="w-4 h-4"></i> Lưu lại
                 </button>
             </div>
@@ -131,71 +222,131 @@
     </div>
 
     <!-- Modal OTP -->
-    <div id="otpModal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
-        <div class="bg-white p-8 rounded-[20px] w-full max-w-[360px] text-center shadow-2xl">
-            <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="shield-check" class="w-7 h-7"></i></div>
-            <h2 class="text-lg font-bold text-slate-800 mb-2">Bảo mật 2 Lớp</h2>
-            <p class="text-[13px] text-slate-500 mb-6">Mã OTP đã gửi về Email Thầy Đức.</p>
-            <input type="text" id="otpCode" placeholder="000000" maxlength="6" class="w-full bg-slate-50 border border-slate-200 p-3 rounded-lg mb-5 text-center text-xl tracking-[0.4em] font-bold outline-none focus:border-indigo-500 focus:bg-white">
+    <div id="otpModal" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+        <div class="bg-white p-8 rounded-[20px] w-full max-w-[380px] text-center shadow-2xl">
+            <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-5">
+                <i data-lucide="shield-check" class="w-7 h-7"></i>
+            </div>
+            <h2 class="text-xl font-bold text-slate-800 mb-2">Bảo mật 2 Lớp</h2>
+            <p class="text-[13px] text-slate-500 mb-6">Mã OTP gồm 6 số đã được gửi về email Admin.</p>
+            <input type="text" id="otpCode" placeholder="000000" maxlength="6" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl mb-6 text-center text-2xl tracking-[0.4em] font-bold outline-none focus:border-indigo-500 focus:bg-white transition-colors">
             <div class="flex gap-3">
-                <button onclick="closeOTPModal()" class="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-lg font-medium hover:bg-slate-200">Hủy</button>
-                <button onclick="verifyOTP()" class="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700">Xác nhận</button>
+                <button onclick="closeOTPModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-medium hover:bg-slate-200 transition-colors">Hủy</button>
+                <button onclick="verifyOTP()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-medium hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-colors">Xác nhận</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Pass -->
-    <div id="passDisplayModal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
-        <div class="bg-white p-6 rounded-[20px] w-full max-w-[340px] text-center shadow-2xl border-t-4 border-emerald-500">
-            <h2 class="text-base font-bold text-slate-800 mb-4">Thông tin đăng nhập</h2>
-            <div class="bg-slate-50 p-4 rounded-xl mb-5 text-left border border-slate-100">
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Tài khoản</p>
-                <p id="displayAcc" class="font-medium text-slate-700 mb-3 break-all text-sm"></p>
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Mật khẩu</p>
-                <p id="displayPass" class="font-mono font-bold text-emerald-600 text-lg break-all"></p>
+    <div id="passDisplayModal" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+        <div class="bg-white p-6 rounded-[20px] w-full max-w-[360px] text-center shadow-2xl border-t-4 border-emerald-500">
+            <h2 class="text-lg font-bold text-slate-800 mb-5">Thông tin đăng nhập</h2>
+            <div class="bg-slate-50 p-5 rounded-xl mb-6 text-left border border-slate-100">
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">Tài khoản</p>
+                <p id="displayAcc" class="font-medium text-slate-700 mb-4 break-all text-[15px]"></p>
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide mb-1">Mật khẩu</p>
+                <div class="bg-white border border-slate-200 rounded-lg px-3 py-2">
+                    <p id="displayPass" class="font-mono font-bold text-emerald-600 text-lg break-all"></p>
+                </div>
             </div>
-            <button onclick="closePassDisplay()" class="w-full bg-slate-800 text-white py-2.5 rounded-lg font-medium hover:bg-slate-900">Đóng</button>
+            <button onclick="closePassDisplay()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-medium hover:bg-slate-900 transition-colors">Đóng</button>
         </div>
     </div>
 
+    <!-- Kịch Bản JS Lõi -->
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybTe9OSdTp0HqPXwhPN8Vlel4RT3HmMfap352KP_2eRFZCvpKeyyWOc0Z8LTo-u_f5/exec"; // BẮT BUỘC THAY URL MỚI VÀO ĐÂY
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybTe9OSdTp0HqPXwhPN8Vlel4RT3HmMfap352KP_2eRFZCvpKeyyWOc0Z8LTo-u_f5/exec"; // BẮT BUỘC THAY URL APPS SCRIPT
         const SECRET_TOKEN = "ThayDuc_Authentication_Secret_Token_Long_String_2026";
         
         let allData = [], tagsData = [], currentCategory = 'Tất cả', currentActionId = null;
 
-        // Bảng màu Hashtag cho Logo Fallback và Tag Badge
-        const gradients = [
-            'bg-gradient-to-br from-blue-400 to-indigo-600', 'bg-gradient-to-br from-emerald-400 to-teal-600',
-            'bg-gradient-to-br from-violet-400 to-purple-600', 'bg-gradient-to-br from-rose-400 to-red-600',
-            'bg-gradient-to-br from-amber-400 to-orange-500', 'bg-gradient-to-br from-cyan-400 to-blue-600'
+        // --- HỆ THỐNG MÀU SẮC (Gradient cho Fallback Logo) ---
+        const logoGradients = [
+            'linear-gradient(135deg,#2563eb,#06b6d4)', // Xanh dương - Cyan
+            'linear-gradient(135deg,#7c3aed,#c026d3)', // Tím - Hồng
+            'linear-gradient(135deg,#f97316,#ef4444)', // Cam - Đỏ
+            'linear-gradient(135deg,#059669,#14b8a6)', // Xanh lá - Teal
+            'linear-gradient(135deg,#4f46e5,#2563eb)', // Indigo - Xanh
+            'linear-gradient(135deg,#db2777,#f43f5e)'  // Hồng đậm - Rose
         ];
 
-        function getHashClass(str, arr) {
+        // Thuật toán Hash để màu sắc logo luôn cố định theo tên website
+        function hashString(str = '') {
             let hash = 0;
-            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            return arr[Math.abs(hash) % arr.length];
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash);
         }
 
-        // Logic gán màu tinh tế cho Tag theo Keyword
+        // --- XỬ LÝ DỮ LIỆU ĐỊNH DẠNG ---
+        function getDomain(url) {
+            try {
+                const normalized = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+                return new URL(normalized).hostname.replace(/^www\./, '');
+            } catch { return ''; }
+        }
+
+        function getDisplayName(item) {
+            const rawName = (item.name || item.link || '').trim();
+            if (rawName.startsWith('http://') || rawName.startsWith('https://')) {
+                return getDomain(rawName) || 'Website';
+            }
+            return rawName;
+        }
+
+        // Màu nhẹ cho Tag
         function getTagColor(tag) {
             let t = tag.toLowerCase();
             if (t.includes('việc')) return 'bg-blue-50 text-blue-600 border-blue-100';
             if (t.includes('cá nhân')) return 'bg-purple-50 text-purple-600 border-purple-100';
             if (t.includes('công cụ')) return 'bg-cyan-50 text-cyan-600 border-cyan-100';
-            if (t.includes('phúc')) return 'bg-indigo-50 text-indigo-600 border-indigo-100';
-            if (t.includes('điểm') || t.includes('trần')) return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+            if (t.includes('phúc')) return 'bg-orange-50 text-orange-600 border-orange-100';
+            if (t.includes('điểm') || t.includes('trần hưng đạo')) return 'bg-emerald-50 text-emerald-600 border-emerald-100';
             return 'bg-slate-100 text-slate-600 border-slate-200';
         }
 
-        // Chữ cái đầu chuẩn xác
-        function getInitial(name) { return name?.trim()?.charAt(0)?.toUpperCase() || "?"; }
+        // --- HỆ THỐNG XỬ LÝ LOGO CHUẨN XÁC ---
+        function getFaviconSources(item) {
+            const domain = getDomain(item.link);
+            return [
+                item.logo, // Nguồn 1: Ưu tiên logo custom trong Database (hoặc raw Github)
+                domain ? `https://${domain}/favicon.ico` : null, // Nguồn 2: Favicon trực tiếp (Hạn chế tối đa quả địa cầu)
+                domain ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128` : null // Nguồn 3
+            ].filter(Boolean);
+        }
 
+        // Cơ chế đổi nguồn liên tục khi img bị lỗi (Hoặc ép lỗi nếu nhận ra quả địa cầu nhỏ)
+        window.handleFaviconError = function(imgElement, name) {
+            let sources = [];
+            try { sources = JSON.parse(imgElement.dataset.sources || '[]'); } catch (e) {}
+            
+            let currentIndex = parseInt(imgElement.dataset.index || '0', 10);
+            currentIndex++;
+
+            if (currentIndex < sources.length) {
+                // Thử nguồn tiếp theo
+                imgElement.dataset.index = currentIndex;
+                imgElement.src = sources[currentIndex];
+            } else {
+                // TẤT CẢ NGUỒN ĐỀU THẤT BẠI -> SỬ DỤNG LOGO CHỮ CÁI
+                const firstLetter = (name.charAt(0) || 'W').toUpperCase();
+                const gradient = logoGradients[hashString(name) % logoGradients.length];
+                
+                const div = document.createElement('div');
+                div.className = 'website-letter-logo';
+                div.style.background = gradient;
+                div.textContent = firstLetter;
+                
+                imgElement.parentNode.replaceChild(div, imgElement);
+            }
+        };
+
+        // --- LOGIC GIAO DIỆN CHUNG ---
         function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('mobileOverlay');
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('mobileOverlay').classList.toggle('hidden');
         }
 
         async function loadData() {
@@ -203,10 +354,10 @@
             try {
                 let res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "getList" }) });
                 let result = await res.json();
-                allData = result.data.reverse(); // Đảo ngược để hiện "Mới thêm" lên trên
+                allData = result.data || [];
                 extractTags();
                 renderUI();
-            } catch(e) { alert("Lỗi tải dữ liệu. Vui lòng thử lại."); }
+            } catch(e) { console.error(e); alert("Lỗi tải dữ liệu."); }
             showLoading(false);
         }
 
@@ -214,32 +365,41 @@
             let tagMap = { 'Tất cả': allData.length };
             let datalistHTML = "";
             allData.forEach(row => {
-                let cat = row.category.trim() || "Khác";
+                let cat = (row.category || "Khác").trim();
                 row.category = cat;
                 tagMap[cat] = (tagMap[cat] || 0) + 1;
             });
             tagsData = Object.keys(tagMap).map(key => ({ name: key, count: tagMap[key] }));
+            
             tagsData.filter(t => t.name !== 'Tất cả').forEach(t => datalistHTML += `<option value="${t.name}">`);
             document.getElementById('tagList').innerHTML = datalistHTML;
             document.getElementById('headerStats').innerText = `${allData.length} website • ${tagsData.length - 1} danh mục`;
         }
 
-        function renderUI() { renderSidebar(); renderMobileChips(); handleSearch(); }
+        function renderUI() {
+            renderSidebar();
+            renderMobileChips();
+            handleSearchAndSort(); 
+        }
 
         function renderSidebar() {
             let html = "";
             tagsData.forEach(tag => {
                 let isActive = tag.name === currentCategory;
-                let activeClass = isActive ? "bg-blue-50 text-blue-700 font-semibold" : "text-slate-600 hover:bg-slate-50";
-                let icon = tag.name === 'Tất cả' ? 'layout-grid' : tag.name.toLowerCase().includes('công cụ') ? 'wrench' : 'folder';
-                
+                let activeClass = isActive 
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-200/50" 
+                    : "text-slate-600 hover:bg-slate-50";
+                let icon = tag.name === 'Tất cả' ? 'layout-grid' : 'folder';
+                let iconColor = isActive ? 'text-white' : 'text-slate-400 group-hover:text-blue-500';
+                let badgeClass = isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-blue-100 group-hover:text-blue-600';
+
                 html += `
-                <button onclick="setCategory('${tag.name}')" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-200 group ${activeClass}">
+                <button onclick="setCategory('${tag.name}')" class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors group ${activeClass}">
                     <div class="flex items-center gap-3 overflow-hidden">
-                        <i data-lucide="${icon}" class="w-[18px] h-[18px] shrink-0 ${isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-blue-500'}"></i>
-                        <span class="truncate text-[13px]">${tag.name}</span>
+                        <i data-lucide="${icon}" class="w-5 h-5 shrink-0 ${iconColor} transition-colors"></i>
+                        <span class="truncate text-[13.5px] font-medium">${tag.name}</span>
                     </div>
-                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${isActive ? 'bg-white shadow-sm' : 'bg-slate-100 group-hover:bg-slate-200'}">${tag.count}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors ${badgeClass}">${tag.count}</span>
                 </button>`;
             });
             document.getElementById("sidebarMenu").innerHTML = html;
@@ -250,62 +410,45 @@
             let html = "";
             tagsData.forEach(tag => {
                 let isActive = tag.name === currentCategory;
-                let activeClass = isActive ? "bg-slate-800 text-white" : "bg-white text-slate-600 border border-slate-200";
-                html += `<button onclick="setCategory('${tag.name}')" class="shrink-0 px-4 py-1.5 rounded-full text-[13px] font-medium ${activeClass}">${tag.name}</button>`;
+                let activeClass = isActive ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-600 border-slate-200";
+                html += `<button onclick="setCategory('${tag.name}')" class="shrink-0 px-4 py-1.5 border rounded-full text-[13px] font-medium ${activeClass}">${tag.name}</button>`;
             });
             document.getElementById("mobileChips").innerHTML = html;
         }
 
         function setCategory(cat) {
             currentCategory = cat;
-            document.getElementById("searchInput").value = "";
             renderUI();
             if(!document.getElementById('sidebar').classList.contains('-translate-x-full')) toggleMobileMenu();
         }
 
         function clearSearch() {
             document.getElementById("searchInput").value = "";
-            handleSearch();
+            handleSearchAndSort();
         }
 
-        function handleSearch() {
+        // Kết hợp Search và Sort
+        function handleSearchAndSort() {
             let keyword = document.getElementById("searchInput").value.toLowerCase();
             document.getElementById("clearSearchBtn").style.display = keyword ? "block" : "none";
             
+            // Lọc theo keyword & Category
             let filtered = allData.filter(row => {
-                let matchKeyword = row.name.toLowerCase().includes(keyword) || row.link.toLowerCase().includes(keyword) || row.category.toLowerCase().includes(keyword);
+                let matchKey = row.name.toLowerCase().includes(keyword) || row.link.toLowerCase().includes(keyword) || row.category.toLowerCase().includes(keyword);
                 let matchCat = (currentCategory === 'Tất cả') || (row.category === currentCategory);
-                return matchKeyword && matchCat;
+                return matchKey && matchCat;
             });
-            renderGrid(filtered);
+
+            // Sắp xếp
+            let sortType = document.getElementById("sortSelect").value;
+            let sortedData = [...filtered];
+            if (sortType === 'newest') sortedData = sortedData.reverse(); // Dữ liệu cũ nhất thêm trước
+            else if (sortType === 'az') sortedData.sort((a, b) => a.name.localeCompare(b.name));
+            else if (sortType === 'za') sortedData.sort((a, b) => b.name.localeCompare(a.name));
+            else if (sortType === 'category') sortedData.sort((a, b) => a.category.localeCompare(b.category));
+
+            renderGrid(sortedData);
         }
-
-        // ================= LOGIC FALLBACK 4 BƯỚC MƯỢT MÀ =================
-        function getInitialImgData(row, domain) {
-            // Bước 1: Ưu tiên Custom Logo GitHub/Database
-            if (row.logo && row.logo.trim() !== "") return { src: row.logo, attempts: -1 };
-            // Bước 2: Thử Google Favicon
-            return { src: `https://www.google.com/s2/favicons?domain=${domain}&sz=128`, attempts: 0 };
-        }
-
-        window.handleImageError = function(img) {
-            let domain = img.getAttribute('data-domain');
-            let attempts = parseInt(img.getAttribute('data-attempts'));
-
-            if (attempts === -1) { // Lỗi logo Custom -> Thử Google
-                img.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-                img.setAttribute('data-attempts', '0');
-            } else if (attempts === 0) { // Lỗi Google -> Thử DuckDuckGo
-                img.src = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
-                img.setAttribute('data-attempts', '1');
-            } else if (attempts === 1) { // Lỗi DuckDuckGo -> Thử trực tiếp web
-                img.src = `https://${domain}/favicon.ico`;
-                img.setAttribute('data-attempts', '2');
-            } else { // Tất cả đều lỗi -> Hiện Logo chữ cái
-                img.style.display = 'none';
-                img.previousElementSibling.style.display = 'flex';
-            }
-        };
 
         function renderGrid(data) {
             let grid = document.getElementById("dataGrid");
@@ -316,37 +459,61 @@
 
             let html = "";
             data.forEach(row => {
-                let domain = "";
-                try { domain = new URL(row.link).hostname.replace('www.',''); } catch(e) { domain = row.link; }
+                const displayName = getDisplayName(row);
+                const domain = getDomain(row.link);
+                const tagColor = getTagColor(row.category);
                 
-                let initial = getInitial(row.name);
-                let bgClass = getHashClass(row.name, gradients);
-                let tagColor = getTagColor(row.category);
-                let imgData = getInitialImgData(row, domain);
+                // Lấy mảng Sources & chuẩn bị Json truyền vào HTML
+                const sources = getFaviconSources(row);
+                const sourcesJson = JSON.stringify(sources).replace(/"/g, '&quot;');
+                
+                // Nguồn khởi tạo đầu tiên
+                const initialSrc = sources[0] || 'invalid-url-force-error';
 
                 html += `
-                <div class="bg-white p-4 rounded-[16px] border border-slate-200 hover:border-blue-200 hover:shadow-md hover:-translate-y-[2px] transition-200 flex flex-col group relative">
-                    <button onclick="deleteData('${row.id}')" class="absolute top-2 right-2 p-1.5 rounded-md text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-200 z-10"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                <div class="website-card bg-white border border-slate-200 rounded-2xl p-4 flex flex-col relative group">
+                    <!-- Nút Xóa -->
+                    <button onclick="deleteData('${row.id}')" class="absolute top-3 right-3 p-1.5 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-colors z-10" title="Xóa Website">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
                     
-                    <div class="flex items-center gap-3.5 mb-4 pr-5">
-                        <div class="relative w-11 h-11 rounded-[12px] shrink-0 overflow-hidden shadow-sm flex items-center justify-center ring-1 ring-black/5 bg-white">
-                            <!-- Fallback Letter (Ẩn mặc định) -->
-                            <div class="absolute inset-0 items-center justify-center text-white font-bold text-xl ${bgClass} z-0 shadow-inner" style="display:none;">${initial}</div>
-                            <!-- Ảnh chính -->
-                            <img src="${imgData.src}" data-domain="${domain}" data-attempts="${imgData.attempts}" onerror="handleImageError(this)" onload="if(this.width<=16 && this.getAttribute('data-attempts')!='-1') handleImageError(this)" class="absolute inset-0 w-full h-full object-contain bg-white z-10 p-0.5" alt="logo">
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h3 class="font-bold text-slate-800 text-[14px] truncate" title="${row.name}">${row.name}</h3>
-                            <p class="text-[11px] text-slate-400 truncate">${domain}</p>
+                    <!-- Header: Logo & Title (Click to open web) -->
+                    <div class="flex items-center gap-3.5 mb-5 pr-6">
+                        <a href="${row.link}" target="_blank" rel="noopener noreferrer" class="logo-link" title="Mở ${displayName}">
+                            <img 
+                                class="website-logo-img" 
+                                src="${initialSrc}" 
+                                data-sources="${sourcesJson}"
+                                data-index="0"
+                                alt="${displayName}"
+                                onerror="handleFaviconError(this, '${displayName.replace(/'/g, "\\'")}')"
+                                onload="if(this.naturalWidth <= 16 && this.dataset.index !== '0') handleFaviconError(this, '${displayName.replace(/'/g, "\\'")}')" 
+                            />
+                        </a>
+                        <div class="flex flex-col min-w-0">
+                            <a href="${row.link}" target="_blank" rel="noopener noreferrer" class="website-title text-[15px] truncate" title="Mở ${displayName}">
+                                ${displayName}
+                            </a>
+                            <span class="text-[12px] text-slate-400 truncate">${domain}</span>
                         </div>
                     </div>
                     
+                    <!-- Footer: Tag & Actions -->
                     <div class="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span class="text-[10px] font-semibold border px-2 py-0.5 rounded uppercase tracking-wide truncate max-w-[50%] ${tagColor}">${row.category}</span>
-                        <div class="flex items-center gap-1">
-                            <button onclick="openFormModal('edit', '${row.id}')" class="w-[30px] h-[30px] flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-blue-600 transition-200" title="Chỉnh sửa"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-                            <button onclick="requestViewPass('${row.id}')" class="w-[30px] h-[30px] flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-emerald-600 transition-200" title="Xem Mật khẩu"><i data-lucide="key-round" class="w-3.5 h-3.5"></i></button>
-                            <a href="${row.link}" target="_blank" class="w-[30px] h-[30px] flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-200 ml-1" title="Mở trang"><i data-lucide="external-link" class="w-4 h-4"></i></a>
+                        <span class="text-[10.5px] font-semibold border px-2.5 py-0.5 rounded uppercase tracking-wide truncate max-w-[55%] ${tagColor}">
+                            ${row.category || 'KHÁC'}
+                        </span>
+                        
+                        <div class="flex items-center gap-1.5 text-slate-400">
+                            <button onclick="openFormModal('edit', '${row.id}')" class="p-1.5 rounded-lg hover:bg-slate-100 hover:text-blue-600 transition-colors" title="Chỉnh sửa">
+                                <i data-lucide="edit-2" class="w-[18px] h-[18px]"></i>
+                            </button>
+                            <button onclick="requestViewPass('${row.id}')" class="p-1.5 rounded-lg hover:bg-slate-100 hover:text-emerald-600 transition-colors" title="Tài khoản / Mật khẩu">
+                                <i data-lucide="key" class="w-[18px] h-[18px]"></i>
+                            </button>
+                            <a href="${row.link}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors ml-1" title="Mở trang web">
+                                <i data-lucide="external-link" class="w-[18px] h-[18px]"></i>
+                            </a>
                         </div>
                     </div>
                 </div>`;
@@ -357,26 +524,51 @@
 
         // --- PHÍM TẮT SEARCH (Ctrl+K hoặc /) ---
         document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement !== document.getElementById('searchInput'))) {
+            if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement.tagName !== 'INPUT')) {
                 e.preventDefault();
                 document.getElementById('searchInput').focus();
             }
         });
 
-        // --- FORM & DATA ---
+        // --- PREVIEW LOGO KHI NHẬP FORM ---
+        document.getElementById('logo').addEventListener('input', function(e) {
+            const url = e.target.value.trim();
+            const preview = document.getElementById('logo-preview');
+            const placeholder = document.getElementById('logo-placeholder');
+            if(url) {
+                preview.src = url;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            } else {
+                preview.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+            }
+        });
+
+        // --- XỬ LÝ FORM MODAL & API ---
         function showLoading(show) { document.getElementById("loading").classList[show?'remove':'add']("hidden"); }
 
         function openFormModal(mode, id = null) {
             document.getElementById("formModal").classList.remove("hidden");
+            const preview = document.getElementById('logo-preview');
+            const placeholder = document.getElementById('logo-placeholder');
+
             if(mode === 'add') {
                 document.getElementById("modalTitle").innerText = "Thêm Website";
                 ['editId','name','link','logo','acc','pass'].forEach(i => document.getElementById(i).value = "");
                 document.getElementById("cat").value = currentCategory === 'Tất cả' ? 'Công việc' : currentCategory;
+                preview.classList.add('hidden'); placeholder.classList.remove('hidden');
             } else {
-                document.getElementById("modalTitle").innerText = "Sửa Website";
-                let rowInfo = allData.find(r => r.id === id);
-                ['editId','cat','name','link','logo','acc'].forEach(i => document.getElementById(i).value = rowInfo[i==='editId'?'id':i] || "");
+                document.getElementById("modalTitle").innerText = "Chỉnh sửa Website";
+                let row = allData.find(r => r.id === id);
+                ['editId','cat','name','link','logo','acc'].forEach(i => document.getElementById(i).value = row[i==='editId'?'id':i] || "");
                 document.getElementById("pass").value = ""; 
+                
+                if(row.logo) {
+                    preview.src = row.logo; preview.classList.remove('hidden'); placeholder.classList.add('hidden');
+                } else {
+                    preview.classList.add('hidden'); placeholder.classList.remove('hidden');
+                }
             }
         }
         function closeFormModal() { document.getElementById("formModal").classList.add("hidden"); }
@@ -389,20 +581,22 @@
                 link: document.getElementById("link").value, logo: document.getElementById("logo").value,
                 account: document.getElementById("acc").value, password: document.getElementById("pass").value
             };
-            if(!payload.name || !payload.link) return alert("Vui lòng nhập Tên và Link!");
+            if(!payload.name || !payload.link) return alert("Vui lòng nhập Tên và URL!");
             closeFormModal(); showLoading(true);
             await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
             loadData();
         }
+        
         async function deleteData(id) {
-            if(confirm("Xóa website này khỏi hệ thống?")) {
+            if(confirm("Xóa website này?")) {
                 showLoading(true); await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "delete", id: id }) }); loadData();
             }
         }
 
-        // --- BẢO MẬT ---
+        // --- XÁC THỰC BẢO MẬT (OTP) ---
         function closeOTPModal() { document.getElementById("otpModal").classList.add("hidden"); document.getElementById("otpCode").value = ""; }
         function closePassDisplay() { document.getElementById("passDisplayModal").classList.add("hidden"); }
+        
         async function requestViewPass(id) {
             currentActionId = id; let token = sessionStorage.getItem("adminSession");
             if (token) return fetchPassword(id, token);
@@ -413,25 +607,28 @@
                 if(result.status === "error") alert(result.message); else document.getElementById("otpModal").classList.remove("hidden");
             } catch(e) {} showLoading(false);
         }
+        
         async function verifyOTP() {
             let otp = document.getElementById("otpCode").value; if(!otp) return;
             closeOTPModal(); showLoading(true);
             let res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "verifyOTP", otp: otp }) });
             let data = await res.json(); showLoading(false);
             if (data.status === "success") { sessionStorage.setItem("adminSession", data.sessionToken); fetchPassword(currentActionId, data.sessionToken); }
-            else alert(data.message || "OTP sai!");
+            else alert(data.message || "OTP không hợp lệ!");
         }
+        
         async function fetchPassword(id, token) {
             let rowInfo = allData.find(r => r.id === id); showLoading(true);
             let res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "getPass", id: id, token: SECRET_TOKEN, sessionToken: token }) });
             let data = await res.json(); showLoading(false);
             if (data.status === "success") {
-                document.getElementById("displayAcc").innerText = rowInfo.account || "(Trống)";
-                document.getElementById("displayPass").innerText = data.pass || "(Trống)";
+                document.getElementById("displayAcc").innerText = rowInfo.account || "Không có";
+                document.getElementById("displayPass").innerText = data.pass || "Không có";
                 document.getElementById("passDisplayModal").classList.remove("hidden");
-            } else { alert("Hết phiên làm việc."); sessionStorage.removeItem("adminSession"); }
+            } else { alert("Phiên làm việc hết hạn."); sessionStorage.removeItem("adminSession"); }
         }
 
+        // Khởi chạy
         window.onload = () => { lucide.createIcons(); loadData(); };
     </script>
 </body>
