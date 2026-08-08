@@ -9,138 +9,121 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        /* Ẩn thanh cuộn nhưng vẫn cuộn được */
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Hiệu ứng mượt mà */
-        .transition-all-200 { transition: all 0.2s ease-in-out; }
-        
-        /* Cắt chữ nhiều dòng */
-        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .transition-200 { transition: all 0.2s ease-in-out; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden text-slate-800">
 
-    <!-- OVERLAY CHO MOBILE SIDEBAR -->
+    <!-- OVERLAY CHO MOBILE -->
     <div id="mobileOverlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden backdrop-blur-sm transition-opacity"></div>
 
     <!-- SIDEBAR -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 transform -translate-x-full md:relative md:translate-x-0 shrink-0">
-        <!-- Logo -->
-        <div class="h-20 flex items-center justify-between px-6 border-b border-slate-100 shrink-0">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-[260px] bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 transform -translate-x-full md:relative md:translate-x-0 shrink-0">
+        <div class="h-[90px] flex items-center justify-between px-6 border-b border-slate-100 shrink-0">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-200">
-                    <i data-lucide="layers" class="w-5 h-5"></i>
-                </div>
+                <img src="./logo.jpg" alt="An Phúc Logo" class="w-10 h-10 rounded-[10px] object-cover shadow-sm border border-slate-100" onerror="this.src='https://ui-avatars.com/api/?name=AP&background=2563eb&color=fff&rounded=true'">
                 <div>
-                    <h1 class="font-bold text-lg leading-tight text-slate-900 tracking-tight">Link Hub</h1>
-                    <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">An Phúc Center</p>
+                    <h1 class="font-bold text-[17px] text-slate-900 tracking-tight leading-tight">Link Hub</h1>
+                    <p class="text-[9px] text-slate-500 font-bold tracking-[0.15em] uppercase mt-0.5">An Phúc Center</p>
                 </div>
             </div>
-            <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-50">
+            <button onclick="toggleMobileMenu()" class="md:hidden p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-50">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
-
-        <!-- Menu Tags -->
-        <div class="flex-1 overflow-y-auto hide-scroll p-4 flex flex-col gap-1" id="sidebarMenu">
-            <!-- Render danh mục ở đây -->
-        </div>
-        
-        <!-- Bottom Info -->
-        <div class="p-4 border-t border-slate-100 shrink-0">
-            <div class="bg-slate-50 p-4 rounded-xl flex items-start gap-3">
-                <i data-lucide="lightbulb" class="w-5 h-5 text-amber-500 shrink-0"></i>
-                <p class="text-xs text-slate-500 leading-relaxed">Mẹo: Bạn có thể tìm kiếm theo tên, tag hoặc đường dẫn URL.</p>
-            </div>
-        </div>
+        <div class="flex-1 overflow-y-auto hide-scroll p-4 flex flex-col gap-1" id="sidebarMenu"></div>
     </aside>
 
     <!-- MAIN CONTENT -->
     <main class="flex-1 flex flex-col h-full min-w-0 bg-slate-50 relative">
-        
         <!-- HEADER -->
         <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shrink-0">
-            <div class="h-20 px-4 md:px-8 flex items-center justify-between gap-4">
-                <div class="flex items-center gap-3 flex-1">
-                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 -ml-2 text-slate-600 rounded-xl hover:bg-slate-100">
+            <div class="h-[90px] px-5 md:px-8 flex flex-col md:flex-row justify-center md:justify-between items-start md:items-center gap-4">
+                
+                <div class="flex items-center gap-4 w-full md:w-auto mt-2 md:mt-0">
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 -ml-2 text-slate-600 rounded-xl hover:bg-slate-100 shrink-0">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
-                    <!-- Search Bar -->
-                    <div class="relative w-full max-w-md group">
-                        <i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
-                        <input type="text" id="searchInput" placeholder="Tìm kiếm công cụ, website..." class="w-full bg-slate-100 border-none rounded-full py-3 pl-11 pr-4 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400" onkeyup="handleSearch()">
+                    <div>
+                        <h2 class="font-bold text-lg text-slate-800 leading-tight">Hệ thống Website</h2>
+                        <p id="headerStats" class="text-[13px] text-slate-500 font-medium">Đang tải dữ liệu...</p>
                     </div>
                 </div>
-                <!-- Nút Thêm Mới -->
-                <button onclick="openFormModal('add')" class="shrink-0 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold h-11 px-5 rounded-full shadow-md shadow-blue-200 transition-all-200 flex items-center gap-2">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    <span class="hidden sm:inline">Thêm mới</span>
-                </button>
+
+                <div class="flex items-center gap-3 w-full md:w-auto mb-2 md:mb-0">
+                    <div class="relative w-full md:w-[320px] lg:w-[400px] group">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
+                        <input type="text" id="searchInput" placeholder="Tìm tên web, URL, danh mục... (Ctrl+K)" class="w-full bg-slate-100 border-none rounded-xl py-2.5 pl-11 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400" onkeyup="handleSearch()">
+                        <button onclick="clearSearch()" id="clearSearchBtn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <button onclick="openFormModal('add')" class="shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-semibold h-[42px] px-5 rounded-xl shadow-sm shadow-blue-200 transition-200 flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Thêm mới</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- MOBILE TAG CHIPS (Cuộn ngang trên điện thoại) -->
+            <!-- CHIP CHO MOBILE -->
             <div class="md:hidden border-t border-slate-100 bg-white">
-                <div class="flex overflow-x-auto hide-scroll gap-2 px-4 py-3" id="mobileChips">
-                    <!-- Render chip ở đây -->
-                </div>
+                <div class="flex overflow-x-auto hide-scroll gap-2 px-5 py-3" id="mobileChips"></div>
             </div>
         </header>
 
-        <!-- LƯỚI DỮ LIỆU -->
-        <div class="flex-1 p-4 md:p-8 overflow-y-auto hide-scroll relative">
-            <div class="max-w-7xl mx-auto">
+        <!-- LƯỚI DATA -->
+        <div class="flex-1 p-5 md:p-8 overflow-y-auto hide-scroll relative">
+            <div class="max-w-[1600px] mx-auto">
                 <div id="loading" class="absolute inset-0 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm z-10 hidden">
-                    <div class="flex flex-col items-center gap-3 bg-white p-6 rounded-2xl shadow-xl border border-slate-100">
-                        <i data-lucide="loader-2" class="w-8 h-8 text-blue-600 animate-spin"></i>
-                        <span class="text-sm font-medium text-slate-600">Đang đồng bộ dữ liệu...</span>
-                    </div>
+                    <i data-lucide="loader-2" class="w-8 h-8 text-blue-600 animate-spin"></i>
                 </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="dataGrid">
-                    <!-- Dữ liệu render tại đây -->
-                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5" id="dataGrid"></div>
             </div>
         </div>
     </main>
 
-    <!-- ================== MODALS ================== -->
-
-    <!-- Modal Form (Thêm/Sửa) -->
+    <!-- MODAL FORM -->
     <div id="formModal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
-        <div class="bg-white p-6 md:p-8 rounded-[24px] w-full max-w-[420px] shadow-2xl scale-95 transition-transform duration-200" id="formModalContent">
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="modalTitle" class="text-xl font-bold text-slate-800">Thêm Liên Kết</h2>
-                <button onclick="closeFormModal()" class="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <div class="bg-white p-6 md:p-8 rounded-[20px] w-full max-w-[440px] shadow-2xl">
+            <div class="flex justify-between items-center mb-5">
+                <h2 id="modalTitle" class="text-lg font-bold text-slate-800">Thêm Liên Kết</h2>
+                <button onclick="closeFormModal()" class="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-1.5 rounded-lg"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <input type="hidden" id="editId">
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-3">
                 <div>
-                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Danh Mục / Tag</label>
-                    <input type="text" id="cat" list="tagList" placeholder="VD: Công việc, Cá nhân..." class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all">
+                    <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Danh Mục / Tag</label>
+                    <input type="text" id="cat" list="tagList" placeholder="VD: Công việc" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
                     <datalist id="tagList"></datalist>
                 </div>
                 <div>
-                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Tên Website</label>
-                    <input type="text" id="name" placeholder="VD: GitHub An Phúc" class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all">
+                    <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Tên Website</label>
+                    <input type="text" id="name" placeholder="VD: An Phúc Education" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
                 </div>
                 <div>
-                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Đường dẫn (URL)</label>
-                    <input type="url" id="link" placeholder="https://" class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all">
+                    <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Đường dẫn (URL)</label>
+                    <input type="url" id="link" placeholder="https://" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
                 </div>
                 <div>
-                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Tài khoản</label>
-                    <input type="text" id="acc" placeholder="Email hoặc Username" class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all">
+                    <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Logo URL (Tùy chọn)</label>
+                    <input type="url" id="logo" placeholder="Link ảnh từ GitHub, Imgur... (bỏ trống tự lấy Favicon)" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
                 </div>
-                <div>
-                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Mật khẩu</label>
-                    <input type="password" id="pass" placeholder="Bỏ trống nếu không muốn đổi khi sửa" class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl text-sm focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Tài khoản</label>
+                        <input type="text" id="acc" placeholder="Email/User" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="text-[12px] font-semibold text-slate-600 mb-1 block">Mật khẩu</label>
+                        <input type="password" id="pass" placeholder="Bỏ trống nếu không đổi" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-sm outline-none focus:border-blue-500 focus:bg-white">
+                    </div>
                 </div>
             </div>
-            <div class="flex gap-3 justify-end mt-8">
-                <button onclick="closeFormModal()" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 font-semibold text-sm transition-colors">Hủy</button>
-                <button onclick="saveData()" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 active:bg-blue-800 font-semibold text-sm shadow-md shadow-blue-200 transition-all flex items-center gap-2">
+            <div class="flex gap-3 justify-end mt-6">
+                <button onclick="closeFormModal()" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 font-medium text-sm">Hủy</button>
+                <button onclick="saveData()" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center gap-2">
                     <i data-lucide="save" class="w-4 h-4"></i> Lưu lại
                 </button>
             </div>
@@ -149,79 +132,70 @@
 
     <!-- Modal OTP -->
     <div id="otpModal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
-        <div class="bg-white p-8 rounded-[24px] w-full max-w-[400px] text-center shadow-2xl">
-            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                <i data-lucide="shield-check" class="w-8 h-8"></i>
-            </div>
-            <h2 class="text-xl font-bold text-slate-800 mb-2">Xác Thực Quản Trị</h2>
-            <p class="text-sm text-slate-500 mb-6 leading-relaxed">Mã OTP gồm 6 chữ số đã được gửi về email Admin. Vui lòng kiểm tra hộp thư.</p>
-            <input type="text" id="otpCode" placeholder="0 0 0 0 0 0" maxlength="6" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl mb-6 text-center text-2xl tracking-[0.5em] font-bold text-slate-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all">
+        <div class="bg-white p-8 rounded-[20px] w-full max-w-[360px] text-center shadow-2xl">
+            <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="shield-check" class="w-7 h-7"></i></div>
+            <h2 class="text-lg font-bold text-slate-800 mb-2">Bảo mật 2 Lớp</h2>
+            <p class="text-[13px] text-slate-500 mb-6">Mã OTP đã gửi về Email Thầy Đức.</p>
+            <input type="text" id="otpCode" placeholder="000000" maxlength="6" class="w-full bg-slate-50 border border-slate-200 p-3 rounded-lg mb-5 text-center text-xl tracking-[0.4em] font-bold outline-none focus:border-indigo-500 focus:bg-white">
             <div class="flex gap-3">
-                <button onclick="closeOTPModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-semibold hover:bg-slate-200 transition-colors">Hủy</button>
-                <button onclick="verifyOTP()" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 shadow-md shadow-blue-200 transition-all">Xác nhận</button>
+                <button onclick="closeOTPModal()" class="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-lg font-medium hover:bg-slate-200">Hủy</button>
+                <button onclick="verifyOTP()" class="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700">Xác nhận</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Pass -->
     <div id="passDisplayModal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
-        <div class="bg-white p-6 rounded-[24px] w-full max-w-[360px] text-center shadow-2xl border-t-4 border-emerald-500">
-            <div class="mx-auto w-12 h-12 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-4">
-                <i data-lucide="unlock" class="w-6 h-6"></i>
+        <div class="bg-white p-6 rounded-[20px] w-full max-w-[340px] text-center shadow-2xl border-t-4 border-emerald-500">
+            <h2 class="text-base font-bold text-slate-800 mb-4">Thông tin đăng nhập</h2>
+            <div class="bg-slate-50 p-4 rounded-xl mb-5 text-left border border-slate-100">
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Tài khoản</p>
+                <p id="displayAcc" class="font-medium text-slate-700 mb-3 break-all text-sm"></p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Mật khẩu</p>
+                <p id="displayPass" class="font-mono font-bold text-emerald-600 text-lg break-all"></p>
             </div>
-            <h2 class="text-lg font-bold text-slate-800 mb-5">Thông tin đăng nhập</h2>
-            <div class="bg-slate-50 p-5 rounded-xl mb-6 text-left border border-slate-100">
-                <p class="text-[11px] font-bold text-slate-400 uppercase mb-1">Tài khoản</p>
-                <p id="displayAcc" class="font-medium text-slate-700 mb-4 break-all"></p>
-                <p class="text-[11px] font-bold text-slate-400 uppercase mb-1">Mật khẩu</p>
-                <div class="bg-white border border-slate-200 rounded-lg p-3 flex justify-between items-center">
-                    <p id="displayPass" class="font-mono font-bold text-emerald-600 text-base break-all"></p>
-                </div>
-            </div>
-            <button onclick="closePassDisplay()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-semibold hover:bg-slate-900 transition-colors">Đóng</button>
+            <button onclick="closePassDisplay()" class="w-full bg-slate-800 text-white py-2.5 rounded-lg font-medium hover:bg-slate-900">Đóng</button>
         </div>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjHXHhaV-SLX0Ccq7i7covtRlbxQknRO1xa-N8sk605-4iTfwqAsfcFnlO-V7Tkhmj/exec"; // BẮT BUỘC THAY URL APPS SCRIPT VÀO ĐÂY
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybTe9OSdTp0HqPXwhPN8Vlel4RT3HmMfap352KP_2eRFZCvpKeyyWOc0Z8LTo-u_f5/exec"; // BẮT BUỘC THAY URL MỚI VÀO ĐÂY
         const SECRET_TOKEN = "ThayDuc_Authentication_Secret_Token_Long_String_2026";
         
-        let allData = [];
-        let tagsData = [];
-        let currentCategory = 'Tất cả';
-        let currentActionId = null;
+        let allData = [], tagsData = [], currentCategory = 'Tất cả', currentActionId = null;
 
-        // Bảng màu Gradient tĩnh cho Fallback Avatar
+        // Bảng màu Hashtag cho Logo Fallback và Tag Badge
         const gradients = [
-            'bg-gradient-to-br from-blue-500 to-indigo-600',
-            'bg-gradient-to-br from-emerald-400 to-teal-600',
-            'bg-gradient-to-br from-violet-500 to-purple-600',
-            'bg-gradient-to-br from-rose-400 to-red-500',
-            'bg-gradient-to-br from-amber-400 to-orange-500',
-            'bg-gradient-to-br from-cyan-400 to-blue-500'
+            'bg-gradient-to-br from-blue-400 to-indigo-600', 'bg-gradient-to-br from-emerald-400 to-teal-600',
+            'bg-gradient-to-br from-violet-400 to-purple-600', 'bg-gradient-to-br from-rose-400 to-red-600',
+            'bg-gradient-to-br from-amber-400 to-orange-500', 'bg-gradient-to-br from-cyan-400 to-blue-600'
         ];
 
-        // Hash chuỗi thành số để gán màu ngẫu nhiên nhưng cố định
-        function getGradientClass(str) {
+        function getHashClass(str, arr) {
             let hash = 0;
             for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            return gradients[Math.abs(hash) % gradients.length];
+            return arr[Math.abs(hash) % arr.length];
         }
 
-        // Chữ cái đầu
-        function getInitial(name) { return name ? name.substring(0, 1).toUpperCase() : '?'; }
+        // Logic gán màu tinh tế cho Tag theo Keyword
+        function getTagColor(tag) {
+            let t = tag.toLowerCase();
+            if (t.includes('việc')) return 'bg-blue-50 text-blue-600 border-blue-100';
+            if (t.includes('cá nhân')) return 'bg-purple-50 text-purple-600 border-purple-100';
+            if (t.includes('công cụ')) return 'bg-cyan-50 text-cyan-600 border-cyan-100';
+            if (t.includes('phúc')) return 'bg-indigo-50 text-indigo-600 border-indigo-100';
+            if (t.includes('điểm') || t.includes('trần')) return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+            return 'bg-slate-100 text-slate-600 border-slate-200';
+        }
 
-        // Mở/Đóng Mobile Menu
+        // Chữ cái đầu chuẩn xác
+        function getInitial(name) { return name?.trim()?.charAt(0)?.toUpperCase() || "?"; }
+
         function toggleMobileMenu() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobileOverlay');
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
         }
 
         async function loadData() {
@@ -229,66 +203,43 @@
             try {
                 let res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "getList" }) });
                 let result = await res.json();
-                allData = result.data;
+                allData = result.data.reverse(); // Đảo ngược để hiện "Mới thêm" lên trên
                 extractTags();
                 renderUI();
-            } catch(e) {
-                alert("Lỗi tải dữ liệu. Vui lòng kiểm tra lại URL App Script.");
-            }
+            } catch(e) { alert("Lỗi tải dữ liệu. Vui lòng thử lại."); }
             showLoading(false);
         }
 
-        // Gom nhóm và đếm số lượng Tag
         function extractTags() {
             let tagMap = { 'Tất cả': allData.length };
             let datalistHTML = "";
-            
             allData.forEach(row => {
-                let cat = row.category.trim();
-                if(!cat) cat = "Khác";
-                row.category = cat; // chuẩn hóa
+                let cat = row.category.trim() || "Khác";
+                row.category = cat;
                 tagMap[cat] = (tagMap[cat] || 0) + 1;
             });
-            
             tagsData = Object.keys(tagMap).map(key => ({ name: key, count: tagMap[key] }));
-            
-            // Render cho Form Input
-            tagsData.filter(t => t.name !== 'Tất cả').forEach(t => {
-                datalistHTML += `<option value="${t.name}">`;
-            });
+            tagsData.filter(t => t.name !== 'Tất cả').forEach(t => datalistHTML += `<option value="${t.name}">`);
             document.getElementById('tagList').innerHTML = datalistHTML;
+            document.getElementById('headerStats').innerText = `${allData.length} website • ${tagsData.length - 1} danh mục`;
         }
 
-        // Render toàn bộ UI (Sidebar, Chips, Grid)
-        function renderUI() {
-            renderSidebar();
-            renderMobileChips();
-            handleSearch(); // Render Grid qua hàm lọc
-        }
+        function renderUI() { renderSidebar(); renderMobileChips(); handleSearch(); }
 
         function renderSidebar() {
             let html = "";
             tagsData.forEach(tag => {
                 let isActive = tag.name === currentCategory;
-                let activeClass = isActive 
-                    ? "bg-blue-600 text-white shadow-md shadow-blue-200/50" 
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900";
+                let activeClass = isActive ? "bg-blue-50 text-blue-700 font-semibold" : "text-slate-600 hover:bg-slate-50";
+                let icon = tag.name === 'Tất cả' ? 'layout-grid' : tag.name.toLowerCase().includes('công cụ') ? 'wrench' : 'folder';
                 
-                let icon = tag.name === 'Tất cả' ? 'layout-grid' 
-                         : tag.name.toLowerCase().includes('việc') ? 'briefcase'
-                         : tag.name.toLowerCase().includes('cá nhân') ? 'user'
-                         : tag.name.toLowerCase().includes('điểm') ? 'graduation-cap'
-                         : 'folder';
-
                 html += `
-                <button onclick="setCategory('${tag.name}')" class="w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium transition-all-200 group ${activeClass}">
+                <button onclick="setCategory('${tag.name}')" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-200 group ${activeClass}">
                     <div class="flex items-center gap-3 overflow-hidden">
-                        <i data-lucide="${icon}" class="w-5 h-5 shrink-0 ${isActive ? 'text-blue-100' : 'text-slate-400 group-hover:text-blue-500'}"></i>
-                        <span class="truncate text-sm text-left line-clamp-1">${tag.name}</span>
+                        <i data-lucide="${icon}" class="w-[18px] h-[18px] shrink-0 ${isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-blue-500'}"></i>
+                        <span class="truncate text-[13px]">${tag.name}</span>
                     </div>
-                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${isActive ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-blue-100 group-hover:text-blue-600'}">
-                        ${tag.count}
-                    </span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${isActive ? 'bg-white shadow-sm' : 'bg-slate-100 group-hover:bg-slate-200'}">${tag.count}</span>
                 </button>`;
             });
             document.getElementById("sidebarMenu").innerHTML = html;
@@ -299,53 +250,68 @@
             let html = "";
             tagsData.forEach(tag => {
                 let isActive = tag.name === currentCategory;
-                let activeClass = isActive 
-                    ? "bg-slate-800 text-white border-slate-800" 
-                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50";
-
-                html += `
-                <button onclick="setCategory('${tag.name}')" class="shrink-0 flex items-center gap-1.5 px-4 py-2 border rounded-full text-sm font-medium transition-colors ${activeClass}">
-                    ${tag.name} <span class="text-[10px] opacity-70">(${tag.count})</span>
-                </button>`;
+                let activeClass = isActive ? "bg-slate-800 text-white" : "bg-white text-slate-600 border border-slate-200";
+                html += `<button onclick="setCategory('${tag.name}')" class="shrink-0 px-4 py-1.5 rounded-full text-[13px] font-medium ${activeClass}">${tag.name}</button>`;
             });
             document.getElementById("mobileChips").innerHTML = html;
         }
 
         function setCategory(cat) {
             currentCategory = cat;
-            document.getElementById("searchInput").value = ""; // Reset search khi chuyển tab
+            document.getElementById("searchInput").value = "";
             renderUI();
-            // Tự đóng menu mobile nếu đang mở
-            if(!document.getElementById('sidebar').classList.contains('-translate-x-full')){
-                toggleMobileMenu();
-            }
+            if(!document.getElementById('sidebar').classList.contains('-translate-x-full')) toggleMobileMenu();
+        }
+
+        function clearSearch() {
+            document.getElementById("searchInput").value = "";
+            handleSearch();
         }
 
         function handleSearch() {
             let keyword = document.getElementById("searchInput").value.toLowerCase();
+            document.getElementById("clearSearchBtn").style.display = keyword ? "block" : "none";
             
             let filtered = allData.filter(row => {
-                let matchKeyword = row.name.toLowerCase().includes(keyword) || 
-                                   row.link.toLowerCase().includes(keyword) || 
-                                   row.category.toLowerCase().includes(keyword);
+                let matchKeyword = row.name.toLowerCase().includes(keyword) || row.link.toLowerCase().includes(keyword) || row.category.toLowerCase().includes(keyword);
                 let matchCat = (currentCategory === 'Tất cả') || (row.category === currentCategory);
                 return matchKeyword && matchCat;
             });
             renderGrid(filtered);
         }
 
+        // ================= LOGIC FALLBACK 4 BƯỚC MƯỢT MÀ =================
+        function getInitialImgData(row, domain) {
+            // Bước 1: Ưu tiên Custom Logo GitHub/Database
+            if (row.logo && row.logo.trim() !== "") return { src: row.logo, attempts: -1 };
+            // Bước 2: Thử Google Favicon
+            return { src: `https://www.google.com/s2/favicons?domain=${domain}&sz=128`, attempts: 0 };
+        }
+
+        window.handleImageError = function(img) {
+            let domain = img.getAttribute('data-domain');
+            let attempts = parseInt(img.getAttribute('data-attempts'));
+
+            if (attempts === -1) { // Lỗi logo Custom -> Thử Google
+                img.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+                img.setAttribute('data-attempts', '0');
+            } else if (attempts === 0) { // Lỗi Google -> Thử DuckDuckGo
+                img.src = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+                img.setAttribute('data-attempts', '1');
+            } else if (attempts === 1) { // Lỗi DuckDuckGo -> Thử trực tiếp web
+                img.src = `https://${domain}/favicon.ico`;
+                img.setAttribute('data-attempts', '2');
+            } else { // Tất cả đều lỗi -> Hiện Logo chữ cái
+                img.style.display = 'none';
+                img.previousElementSibling.style.display = 'flex';
+            }
+        };
+
         function renderGrid(data) {
             let grid = document.getElementById("dataGrid");
-            
             if(data.length === 0) {
-                grid.innerHTML = `
-                <div class="col-span-full flex flex-col items-center justify-center py-20 text-slate-400">
-                    <i data-lucide="search-x" class="w-16 h-16 mb-4 text-slate-300"></i>
-                    <p class="text-lg font-medium text-slate-600 mb-1">Không tìm thấy dữ liệu</p>
-                    <p class="text-sm">Hãy thử từ khóa khác hoặc chuyển danh mục.</p>
-                </div>`;
-                lucide.createIcons();
-                return;
+                grid.innerHTML = `<div class="col-span-full flex flex-col items-center py-20 text-slate-400"><i data-lucide="ghost" class="w-12 h-12 mb-3"></i><p>Không tìm thấy website nào.</p></div>`;
+                lucide.createIcons(); return;
             }
 
             let html = "";
@@ -353,52 +319,34 @@
                 let domain = "";
                 try { domain = new URL(row.link).hostname.replace('www.',''); } catch(e) { domain = row.link; }
                 
-                // Fallback Avatar siêu xịn
                 let initial = getInitial(row.name);
-                let bgClass = getGradientClass(row.name);
-                
-                // URL Favicon của DuckDuckGo (rất ổn định) hoặc Clearbit
-                let faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+                let bgClass = getHashClass(row.name, gradients);
+                let tagColor = getTagColor(row.category);
+                let imgData = getInitialImgData(row, domain);
 
                 html += `
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1 transition-all-200 flex flex-col group relative overflow-hidden">
+                <div class="bg-white p-4 rounded-[16px] border border-slate-200 hover:border-blue-200 hover:shadow-md hover:-translate-y-[2px] transition-200 flex flex-col group relative">
+                    <button onclick="deleteData('${row.id}')" class="absolute top-2 right-2 p-1.5 rounded-md text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-200 z-10"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                     
-                    <!-- Nút Xóa (Ẩn) -->
-                    <button onclick="deleteData('${row.id}')" class="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur rounded-full text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all z-10" title="Xóa">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                    </button>
-                    
-                    <div class="flex items-center gap-4 mb-4 pr-6">
-                        <!-- Box Logo -->
-                        <div class="relative w-12 h-12 rounded-xl shrink-0 overflow-hidden shadow-sm flex items-center justify-center ${bgClass} text-white font-bold text-xl ring-1 ring-black/5">
-                            <span class="z-0">${initial}</span>
-                            <!-- Ảnh favicon đè lên, nếu hỏng tự mất đi -->
-                            <img src="${faviconUrl}" 
-                                 class="absolute inset-0 w-full h-full object-contain bg-white transition-opacity duration-300 z-10 p-1" 
-                                 onerror="this.style.opacity='0'"
-                                 onload="if(this.width <= 16) this.style.opacity='0'" alt="logo">
+                    <div class="flex items-center gap-3.5 mb-4 pr-5">
+                        <div class="relative w-11 h-11 rounded-[12px] shrink-0 overflow-hidden shadow-sm flex items-center justify-center ring-1 ring-black/5 bg-white">
+                            <!-- Fallback Letter (Ẩn mặc định) -->
+                            <div class="absolute inset-0 items-center justify-center text-white font-bold text-xl ${bgClass} z-0 shadow-inner" style="display:none;">${initial}</div>
+                            <!-- Ảnh chính -->
+                            <img src="${imgData.src}" data-domain="${domain}" data-attempts="${imgData.attempts}" onerror="handleImageError(this)" onload="if(this.width<=16 && this.getAttribute('data-attempts')!='-1') handleImageError(this)" class="absolute inset-0 w-full h-full object-contain bg-white z-10 p-0.5" alt="logo">
                         </div>
-                        
                         <div class="flex-1 min-w-0">
-                            <h3 class="font-bold text-slate-800 text-[15px] truncate leading-tight mb-0.5" title="${row.name}">${row.name}</h3>
-                            <p class="text-[11px] text-slate-400 truncate" title="${domain}">${domain}</p>
+                            <h3 class="font-bold text-slate-800 text-[14px] truncate" title="${row.name}">${row.name}</h3>
+                            <p class="text-[11px] text-slate-400 truncate">${domain}</p>
                         </div>
                     </div>
                     
-                    <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-                        <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md uppercase tracking-wide truncate max-w-[50%]">
-                            ${row.category}
-                        </span>
+                    <div class="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-[10px] font-semibold border px-2 py-0.5 rounded uppercase tracking-wide truncate max-w-[50%] ${tagColor}">${row.category}</span>
                         <div class="flex items-center gap-1">
-                            <button onclick="openFormModal('edit', '${row.id}')" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-blue-600 transition-colors" title="Chỉnh sửa">
-                                <i data-lucide="pencil" class="w-4 h-4"></i>
-                            </button>
-                            <button onclick="requestViewPass('${row.id}')" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-emerald-600 transition-colors" title="Mật khẩu">
-                                <i data-lucide="key-round" class="w-4 h-4"></i>
-                            </button>
-                            <a href="${row.link}" target="_blank" class="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors ml-1" title="Mở trang">
-                                <i data-lucide="external-link" class="w-4 h-4"></i>
-                            </a>
+                            <button onclick="openFormModal('edit', '${row.id}')" class="w-[30px] h-[30px] flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-blue-600 transition-200" title="Chỉnh sửa"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="requestViewPass('${row.id}')" class="w-[30px] h-[30px] flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-emerald-600 transition-200" title="Xem Mật khẩu"><i data-lucide="key-round" class="w-3.5 h-3.5"></i></button>
+                            <a href="${row.link}" target="_blank" class="w-[30px] h-[30px] flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-200 ml-1" title="Mở trang"><i data-lucide="external-link" class="w-4 h-4"></i></a>
                         </div>
                     </div>
                 </div>`;
@@ -407,143 +355,84 @@
             lucide.createIcons();
         }
 
-        // --- HÀM HỖ TRỢ UI ---
-        function showLoading(isShow) {
-            let el = document.getElementById("loading");
-            if(isShow) el.classList.remove("hidden");
-            else el.classList.add("hidden");
-        }
+        // --- PHÍM TẮT SEARCH (Ctrl+K hoặc /) ---
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement !== document.getElementById('searchInput'))) {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
 
-        // --- HÀM THÊM / SỬA / XÓA ---
+        // --- FORM & DATA ---
+        function showLoading(show) { document.getElementById("loading").classList[show?'remove':'add']("hidden"); }
+
         function openFormModal(mode, id = null) {
-            let modal = document.getElementById("formModal");
-            let content = document.getElementById("formModalContent");
-            modal.classList.remove("hidden");
-            setTimeout(() => content.classList.remove("scale-95"), 10);
-            
+            document.getElementById("formModal").classList.remove("hidden");
             if(mode === 'add') {
-                document.getElementById("modalTitle").innerText = "Thêm Liên Kết";
-                document.getElementById("editId").value = "";
+                document.getElementById("modalTitle").innerText = "Thêm Website";
+                ['editId','name','link','logo','acc','pass'].forEach(i => document.getElementById(i).value = "");
                 document.getElementById("cat").value = currentCategory === 'Tất cả' ? 'Công việc' : currentCategory;
-                document.getElementById("name").value = "";
-                document.getElementById("link").value = "";
-                document.getElementById("acc").value = "";
-                document.getElementById("pass").value = "";
-            } else if (mode === 'edit') {
-                document.getElementById("modalTitle").innerText = "Sửa Liên Kết";
+            } else {
+                document.getElementById("modalTitle").innerText = "Sửa Website";
                 let rowInfo = allData.find(r => r.id === id);
-                if(rowInfo) {
-                    document.getElementById("editId").value = rowInfo.id;
-                    document.getElementById("cat").value = rowInfo.category;
-                    document.getElementById("name").value = rowInfo.name;
-                    document.getElementById("link").value = rowInfo.link;
-                    document.getElementById("acc").value = rowInfo.account;
-                    document.getElementById("pass").value = ""; 
-                }
+                ['editId','cat','name','link','logo','acc'].forEach(i => document.getElementById(i).value = rowInfo[i==='editId'?'id':i] || "");
+                document.getElementById("pass").value = ""; 
             }
         }
-
-        function closeFormModal() { 
-            let content = document.getElementById("formModalContent");
-            content.classList.add("scale-95");
-            setTimeout(() => document.getElementById("formModal").classList.add("hidden"), 200);
-        }
+        function closeFormModal() { document.getElementById("formModal").classList.add("hidden"); }
 
         async function saveData() {
             let editId = document.getElementById("editId").value;
             let payload = {
-                action: editId ? "update" : "add",
-                id: editId,
-                category: document.getElementById("cat").value || "Khác",
-                name: document.getElementById("name").value,
-                link: document.getElementById("link").value,
-                account: document.getElementById("acc").value,
-                password: document.getElementById("pass").value
+                action: editId ? "update" : "add", id: editId,
+                category: document.getElementById("cat").value || "Khác", name: document.getElementById("name").value,
+                link: document.getElementById("link").value, logo: document.getElementById("logo").value,
+                account: document.getElementById("acc").value, password: document.getElementById("pass").value
             };
-            if(!payload.name || !payload.link) return alert("Vui lòng nhập Tên và URL!");
-            
-            closeFormModal();
-            showLoading(true);
+            if(!payload.name || !payload.link) return alert("Vui lòng nhập Tên và Link!");
+            closeFormModal(); showLoading(true);
             await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
             loadData();
         }
-
         async function deleteData(id) {
-            if(confirm("Xóa liên kết này khỏi hệ thống?")) {
-                showLoading(true);
-                await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "delete", id: id }) });
-                loadData();
+            if(confirm("Xóa website này khỏi hệ thống?")) {
+                showLoading(true); await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "delete", id: id }) }); loadData();
             }
         }
 
-        // --- HÀM BẢO MẬT OTP ---
-        function closeOTPModal() {
-            document.getElementById("otpModal").classList.add("hidden");
-            document.getElementById("otpCode").value = "";
-        }
-        function closePassDisplay() {
-            document.getElementById("passDisplayModal").classList.add("hidden");
-        }
-
+        // --- BẢO MẬT ---
+        function closeOTPModal() { document.getElementById("otpModal").classList.add("hidden"); document.getElementById("otpCode").value = ""; }
+        function closePassDisplay() { document.getElementById("passDisplayModal").classList.add("hidden"); }
         async function requestViewPass(id) {
-            currentActionId = id;
-            let sessionToken = sessionStorage.getItem("adminSession");
-            
-            if (sessionToken) return fetchPassword(id, sessionToken);
-            
+            currentActionId = id; let token = sessionStorage.getItem("adminSession");
+            if (token) return fetchPassword(id, token);
             showLoading(true);
             try {
                 let res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "requestOTP" }) });
                 let result = await res.json();
-                if(result.status === "error") alert("Lỗi từ server: " + result.message);
-                else document.getElementById("otpModal").classList.remove("hidden");
-            } catch(e) { alert("Lỗi kết nối."); }
-            showLoading(false);
+                if(result.status === "error") alert(result.message); else document.getElementById("otpModal").classList.remove("hidden");
+            } catch(e) {} showLoading(false);
         }
-
         async function verifyOTP() {
-            let otp = document.getElementById("otpCode").value;
-            if(!otp) return alert("Nhập mã OTP!");
-            
-            closeOTPModal();
-            showLoading(true);
+            let otp = document.getElementById("otpCode").value; if(!otp) return;
+            closeOTPModal(); showLoading(true);
             let res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "verifyOTP", otp: otp }) });
-            let data = await res.json();
-            showLoading(false);
-            
-            if (data.status === "success") {
-                sessionStorage.setItem("adminSession", data.sessionToken);
-                fetchPassword(currentActionId, data.sessionToken);
-            } else {
-                alert(data.message || "OTP không hợp lệ!");
-            }
+            let data = await res.json(); showLoading(false);
+            if (data.status === "success") { sessionStorage.setItem("adminSession", data.sessionToken); fetchPassword(currentActionId, data.sessionToken); }
+            else alert(data.message || "OTP sai!");
         }
-
-        async function fetchPassword(id, sessionToken) {
-            let rowInfo = allData.find(r => r.id === id);
-            showLoading(true);
-            let res = await fetch(SCRIPT_URL, {
-                method: "POST",
-                body: JSON.stringify({ action: "getPass", id: id, token: SECRET_TOKEN, sessionToken: sessionToken })
-            });
-            let data = await res.json();
-            showLoading(false);
-            
+        async function fetchPassword(id, token) {
+            let rowInfo = allData.find(r => r.id === id); showLoading(true);
+            let res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "getPass", id: id, token: SECRET_TOKEN, sessionToken: token }) });
+            let data = await res.json(); showLoading(false);
             if (data.status === "success") {
                 document.getElementById("displayAcc").innerText = rowInfo.account || "(Trống)";
                 document.getElementById("displayPass").innerText = data.pass || "(Trống)";
                 document.getElementById("passDisplayModal").classList.remove("hidden");
-            } else {
-                alert("Phiên làm việc hết hạn. Vui lòng thử lại.");
-                sessionStorage.removeItem("adminSession");
-            }
+            } else { alert("Hết phiên làm việc."); sessionStorage.removeItem("adminSession"); }
         }
 
-        // Init
-        window.onload = () => {
-            lucide.createIcons();
-            loadData();
-        };
+        window.onload = () => { lucide.createIcons(); loadData(); };
     </script>
 </body>
 </html>
