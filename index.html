@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Liên Kết & Mật Khẩu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        .glass-input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+        }
+        .glass-input::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .glass-input:focus { outline: none; border-color: white; background: rgba(255, 255, 255, 0.3); }
+        th, td { border-bottom: 1px solid rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body class="p-6 text-white">
+
+<div class="max-w-5xl mx-auto glass-panel p-8 mt-10">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Hệ Thống Lưu Trữ An Phúc</h1>
+        <button onclick="loadData()" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded shadow">Tải lại dữ liệu</button>
+    </div>
+
+    <!-- Form Thêm Mới -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+        <input type="text" id="cat" placeholder="Danh Mục" class="glass-input p-2 rounded">
+        <input type="text" id="name" placeholder="Tên Trang Web" class="glass-input p-2 rounded">
+        <input type="text" id="link" placeholder="Link URL" class="glass-input p-2 rounded">
+        <input type="text" id="acc" placeholder="Tài Khoản" class="glass-input p-2 rounded">
+        <input type="password" id="pass" placeholder="Mật Khẩu" class="glass-input p-2 rounded">
+        <button onclick="addData()" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded md:col-span-5 font-bold">Thêm Dữ Liệu</button>
+    </div>
+
+    <!-- Bảng Dữ Liệu -->
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-white/20">
+                    <th class="p-3">Danh Mục</th>
+                    <th class="p-3">Trang Web</th>
+                    <th class="p-3">Tài Khoản</th>
+                    <th class="p-3">Hành Động</th>
+                </tr>
+            </thead>
+            <tbody id="dataTable">
+                <!-- Dữ liệu render tại đây -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Xác Thực OTP -->
+<div id="otpModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center">
+    <div class="glass-panel p-8 w-96 text-center">
+        <h2 class="text-xl font-bold mb-4">Xác thực 2 Lớp</h2>
+        <p class="text-sm mb-4">Mã OTP đã được gửi về lehoangngocducnt@gmail.com</p>
+        <input type="text" id="otpCode" placeholder="Nhập mã OTP 6 số" class="glass-input w-full p-2 rounded mb-4 text-center text-lg tracking-widest">
+        <div class="flex gap-2 justify-center">
+            <button onclick="closeModal()" class="bg-red-500 px-4 py-2 rounded">Hủy</button>
+            <button onclick="verifyOTP()" class="bg-blue-500 px-4 py-2 rounded">Xác nhận</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXId74AMbjbLxWK9bKpruQMdddidfyVVzINBWnCmjh6eg3E_1aVil96X9DY9WaIA2x/exec"; // THAY URL CỦA BẠN VÀO ĐÂY
+    const SECRET_TOKEN = "ThayDuc_Authentication_Secret_Token_Long_String_2026";
+    let currentActionId = null;
+
+    async function loadData() {
+        document.getElementById("dataTable").innerHTML = "<tr><td colspan='4' class='text-center p-4'>Đang tải dữ liệu...</td></tr>";
+        let res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "getList" })
+        });
+        let result = await res.json();
+        let html = "";
+        result.data.forEach(row => {
+            html += `<tr>
+                <td class="p-3">${row.category}</td>
+                <td class="p-3"><a href="${row.link}" target="_blank" class="text-blue-200 underline">${row.name}</a></td>
+                <td class="p-3">${row.account}</td>
+                <td class="p-3 flex gap-2">
+                    <button onclick="requestViewPass('${row.id}')" class="bg-purple-500 hover:bg-purple-600 px-3 py-1 rounded text-sm">Xem MK</button>
+                    <button onclick="deleteData('${row.id}')" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-sm">Xóa</button>
+                </td>
+            </tr>`;
+        });
+        document.getElementById("dataTable").innerHTML = html;
+    }
+
+    async function addData() {
+        let payload = {
+            action: "add",
+            category: document.getElementById("cat").value,
+            name: document.getElementById("name").value,
+            link: document.getElementById("link").value,
+            account: document.getElementById("acc").value,
+            password: document.getElementById("pass").value
+        };
+        await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+        alert("Đã thêm thành công!");
+        loadData();
+    }
+
+    async function deleteData(id) {
+        if(confirm("Xóa mục này?")) {
+            await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "delete", id: id }) });
+            loadData();
+        }
+    }
+
+    // Logic Xác Thực & Xem Mật Khẩu
+    async function requestViewPass(id) {
+        currentActionId = id;
+        let sessionToken = sessionStorage.getItem("adminSession");
+        
+        // Nếu đã xác thực trong phiên làm việc này, xem ngay
+        if (sessionToken) {
+            fetchPassword(id, sessionToken);
+            return;
+        }
+
+        // Nếu chưa, yêu cầu cấp OTP
+        alert("Đang gửi mã OTP đến email admin, vui lòng đợi...");
+        await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "requestOTP" }) });
+        document.getElementById("otpModal").classList.remove("hidden");
+    }
+
+    function closeModal() {
+        document.getElementById("otpModal").classList.add("hidden");
+        document.getElementById("otpCode").value = "";
+    }
+
+    async function verifyOTP() {
+        let otp = document.getElementById("otpCode").value;
+        let res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "verifyOTP", otp: otp })
+        });
+        let data = await res.json();
+        
+        if (data.status === "success") {
+            sessionStorage.setItem("adminSession", data.sessionToken);
+            closeModal();
+            fetchPassword(currentActionId, data.sessionToken);
+        } else {
+            alert(data.message);
+        }
+    }
+
+    async function fetchPassword(id, sessionToken) {
+        let res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ 
+                action: "getPass", 
+                id: id, 
+                token: SECRET_TOKEN, 
+                sessionToken: sessionToken 
+            })
+        });
+        let data = await res.json();
+        if (data.status === "success") {
+            alert("Mật khẩu là: " + data.pass);
+        } else {
+            alert("Lỗi: " + data.message);
+        }
+    }
+
+    // Tự động tải dữ liệu khi mở web
+    window.onload = loadData;
+</script>
+</body>
+</html>
