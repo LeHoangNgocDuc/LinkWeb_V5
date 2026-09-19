@@ -70,6 +70,21 @@
             background-color: white;
             border: 1px solid #f1f5f9;
         }
+
+        /* Search UX */
+        #searchSummary {
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+        #searchInput::-webkit-search-cancel-button {
+            display: none;
+        }
+        .search-result-card {
+            animation: searchResultIn 0.16s ease-out both;
+        }
+        @keyframes searchResultIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden text-slate-800">
@@ -116,7 +131,7 @@
 
                 <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                     <!-- Sắp xếp -->
-                    <select id="sortSelect" onchange="handleSearchAndSort()" class="w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-600 outline-none focus:border-blue-500 cursor-pointer">
+                    <select id="sortSelect" onchange="handleSearchAndSort(false)" class="w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-600 outline-none focus:border-blue-500 cursor-pointer">
                         <option value="newest">Mới thêm</option>
                         <option value="az">Tên A–Z</option>
                         <option value="za">Tên Z–A</option>
@@ -126,7 +141,7 @@
                     <!-- Tìm kiếm -->
                     <div class="relative w-full sm:w-[320px] lg:w-[380px] group">
                         <i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"></i>
-                        <input type="text" id="searchInput" placeholder="Tìm tên web, URL, danh mục... (Ctrl+K)" class="w-full bg-slate-100 border-none rounded-xl py-2.5 pl-11 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400" onkeyup="handleSearchAndSort()">
+                        <input type="search" id="searchInput" name="linkHubSearch" placeholder="Tìm tên web, URL, danh mục... (Ctrl+K)" class="w-full bg-slate-100 border-none rounded-xl py-2.5 pl-11 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400" oninput="queueSearch(true)" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Tìm kiếm website">
                         <button onclick="clearSearch()" id="clearSearchBtn" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden p-1">
                             <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
@@ -147,12 +162,16 @@
         </header>
 
         <!-- LƯỚI WEBSITE -->
-        <div class="flex-1 p-5 md:p-8 overflow-y-auto hide-scroll relative">
+        <div id="contentScroller" class="flex-1 p-5 md:p-8 overflow-y-auto hide-scroll relative">
             <div class="max-w-[1600px] mx-auto">
                 <div id="loading" class="absolute inset-0 flex items-center justify-center bg-slate-50/80 backdrop-blur-sm z-10 hidden">
                     <i data-lucide="loader-2" class="w-8 h-8 text-blue-600 animate-spin"></i>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="dataGrid">
+
+                <!-- Trạng thái tìm kiếm: tách khỏi lưới để không bị lẫn với các link cũ -->
+                <div id="searchSummary" class="hidden mb-4 bg-white border border-blue-100 rounded-xl px-4 py-3 shadow-sm items-center justify-between gap-3"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="dataGrid" aria-live="polite">
                     <!-- Render Cards Here -->
                 </div>
             </div>
@@ -259,6 +278,7 @@
         const SECRET_TOKEN = "ThayDuc_Authentication_Secret_Token_Long_String_2026";
         
         let allData = [], tagsData = [], currentCategory = 'Tất cả', currentActionId = null;
+        let searchTimer = null;
 
         // --- HỆ THỐNG MÀU SẮC (Gradient cho Fallback Logo) ---
         const logoGradients = [
@@ -294,6 +314,36 @@
                 return getDomain(rawName) || 'Website';
             }
             return rawName;
+        }
+
+
+        // Chuẩn hóa để tìm kiếm tiếng Việt không phụ thuộc dấu / hoa thường
+        function normalizeSearchText(value = '') {
+            return String(value)
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd')
+                .replace(/Đ/g, 'D')
+                .toLowerCase()
+                .trim();
+        }
+
+        function escapeHTML(value = '') {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function getSearchBlob(row) {
+            return normalizeSearchText([
+                row?.name || '',
+                row?.link || '',
+                row?.category || '',
+                getDomain(row?.link || '')
+            ].join(' '));
         }
 
         // Màu nhẹ cho Tag
@@ -416,44 +466,100 @@
             document.getElementById("mobileChips").innerHTML = html;
         }
 
+        function scrollResultsToTop(behavior = 'auto') {
+            const scroller = document.getElementById('contentScroller');
+            if (scroller) scroller.scrollTo({ top: 0, behavior });
+        }
+
         function setCategory(cat) {
             currentCategory = cat;
+
+            // Chọn danh mục = thoát chế độ tìm toàn cục, tránh cảm giác kết quả cũ chồng lên kết quả mới.
+            const input = document.getElementById('searchInput');
+            if (input) input.value = '';
+
             renderUI();
+            scrollResultsToTop('auto');
             if(!document.getElementById('sidebar').classList.contains('-translate-x-full')) toggleMobileMenu();
         }
 
         function clearSearch() {
-            document.getElementById("searchInput").value = "";
-            handleSearchAndSort();
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            handleSearchAndSort(true);
+            input.focus();
+        }
+
+        // Debounce nhẹ để tránh render lại lưới ở mọi phím gõ liên tiếp.
+        function queueSearch(resetScroll = true) {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => handleSearchAndSort(resetScroll), 110);
+        }
+
+        function updateSearchSummary(resultCount, rawKeyword) {
+            const summary = document.getElementById('searchSummary');
+            const keyword = rawKeyword.trim();
+
+            if (!keyword) {
+                summary.classList.add('hidden');
+                summary.classList.remove('flex');
+                summary.innerHTML = '';
+                return;
+            }
+
+            summary.classList.remove('hidden');
+            summary.classList.add('flex');
+            summary.innerHTML = `
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 text-sm text-slate-700">
+                        <i data-lucide="search-check" class="w-4 h-4 text-blue-600 shrink-0"></i>
+                        <span class="truncate"><strong>${resultCount}</strong> kết quả cho <strong>“${escapeHTML(keyword)}”</strong></span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-0.5 ml-6">Đang tìm trên toàn bộ website, không bị giới hạn bởi danh mục đang chọn.</p>
+                </div>
+                <button onclick="clearSearch()" class="shrink-0 text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
+                    Xóa tìm kiếm
+                </button>`;
         }
 
         // Kết hợp Search và Sort
-        function handleSearchAndSort() {
-            let keyword = document.getElementById("searchInput").value.toLowerCase();
-            document.getElementById("clearSearchBtn").style.display = keyword ? "block" : "none";
-            
-            // Lọc theo keyword & Category
+        function handleSearchAndSort(resetScroll = false) {
+            const searchInput = document.getElementById('searchInput');
+            const rawKeyword = searchInput.value || '';
+            const keyword = normalizeSearchText(rawKeyword);
+            const isSearching = keyword.length > 0;
+
+            document.getElementById('clearSearchBtn').style.display = isSearching ? 'block' : 'none';
+
+            // Khi có từ khóa: tìm TOÀN CỤC để không bỏ sót website do danh mục đang chọn.
+            // Khi không có từ khóa: giữ nguyên bộ lọc danh mục như trước.
             let filtered = allData.filter(row => {
-                let matchKey = row.name.toLowerCase().includes(keyword) || row.link.toLowerCase().includes(keyword) || row.category.toLowerCase().includes(keyword);
-                let matchCat = (currentCategory === 'Tất cả') || (row.category === currentCategory);
+                const matchKey = !isSearching || getSearchBlob(row).includes(keyword);
+                const category = String(row?.category || 'Khác').trim();
+                const matchCat = isSearching || currentCategory === 'Tất cả' || category === currentCategory;
                 return matchKey && matchCat;
             });
 
             // Sắp xếp
-            let sortType = document.getElementById("sortSelect").value;
+            let sortType = document.getElementById('sortSelect').value;
             let sortedData = [...filtered];
-            if (sortType === 'newest') sortedData = sortedData.reverse(); // Dữ liệu cũ nhất thêm trước
-            else if (sortType === 'az') sortedData.sort((a, b) => a.name.localeCompare(b.name));
-            else if (sortType === 'za') sortedData.sort((a, b) => b.name.localeCompare(a.name));
-            else if (sortType === 'category') sortedData.sort((a, b) => a.category.localeCompare(b.category));
+            if (sortType === 'newest') sortedData.reverse(); // Dữ liệu cũ nhất thêm trước
+            else if (sortType === 'az') sortedData.sort((a, b) => String(a?.name || '').localeCompare(String(b?.name || ''), 'vi'));
+            else if (sortType === 'za') sortedData.sort((a, b) => String(b?.name || '').localeCompare(String(a?.name || ''), 'vi'));
+            else if (sortType === 'category') sortedData.sort((a, b) => String(a?.category || '').localeCompare(String(b?.category || ''), 'vi'));
 
-            renderGrid(sortedData);
+            updateSearchSummary(sortedData.length, rawKeyword);
+            renderGrid(sortedData, isSearching);
+
+            // Điểm sửa quan trọng: sau khi tìm, luôn đưa vùng kết quả về đầu.
+            // Trước đây scrollTop cũ được giữ lại nên kết quả mới có thể nằm phía trên vùng nhìn thấy.
+            if (resetScroll) scrollResultsToTop('auto');
         }
 
-        function renderGrid(data) {
+        function renderGrid(data, isSearching = false) {
             let grid = document.getElementById("dataGrid");
             if(data.length === 0) {
-                grid.innerHTML = `<div class="col-span-full flex flex-col items-center py-20 text-slate-400"><i data-lucide="ghost" class="w-12 h-12 mb-3"></i><p>Không tìm thấy website nào.</p></div>`;
+                grid.innerHTML = `<div class="col-span-full flex flex-col items-center py-20 text-slate-400"><i data-lucide="search-x" class="w-12 h-12 mb-3"></i><p class="font-medium">Không tìm thấy website phù hợp.</p><p class="text-xs mt-1">Thử tên ngắn hơn, tên miền hoặc danh mục.</p></div>`;
                 lucide.createIcons(); return;
             }
 
@@ -471,7 +577,7 @@
                 const initialSrc = sources[0] || 'invalid-url-force-error';
 
                 html += `
-                <div class="website-card bg-white border border-slate-200 rounded-2xl p-4 flex flex-col relative group">
+                <div class="website-card ${isSearching ? 'search-result-card ring-1 ring-blue-100' : ''} bg-white border border-slate-200 rounded-2xl p-4 flex flex-col relative group">
                     <!-- Nút Xóa -->
                     <button onclick="deleteData('${row.id}')" class="absolute top-3 right-3 p-1.5 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-colors z-10" title="Xóa Website">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -524,9 +630,15 @@
 
         // --- PHÍM TẮT SEARCH (Ctrl+K hoặc /) ---
         document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement.tagName !== 'INPUT')) {
+            const input = document.getElementById('searchInput');
+            if ((e.ctrlKey && e.key.toLowerCase() === 'k') || (e.key === '/' && document.activeElement.tagName !== 'INPUT')) {
                 e.preventDefault();
-                document.getElementById('searchInput').focus();
+                input.focus();
+                input.select();
+            }
+            if (e.key === 'Escape' && input.value) {
+                e.preventDefault();
+                clearSearch();
             }
         });
 
